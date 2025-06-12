@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- HLS.js for m3u8 playback -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <title>Video Uploader</title>
+    <style>
+        body {
+            background: #181818;
+            color: #f5f5f5;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        .navbar {
+            background: #222;
+            border-bottom: 1px solid #333;
+        }
+        .navbar-brand {
+            color: #f5f5f5 !important;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .container {
+            max-width: 700px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            background: #232323;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+            padding: 32px 24px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5em;
+        }
+        hr {
+            border-top: 1px solid #333;
+            margin-bottom: 2em;
+        }
+        .video-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 20px;
+            margin-bottom: 2em;
+            transition: box-shadow 0.2s;
+        }
+        .video-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+        }
+        .video-title {
+            color: #e0e0e0;
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 1em;
+            text-align: center;
+        }
+        .embed-responsive {
+            border-radius: 8px;
+            overflow: hidden;
+            background: #111;
+        }
+        @media (max-width: 576px) {
+            .container {
+                padding: 16px 6px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand mx-auto" href="#">Video Uploader</a>
+</nav>
+<div class="container">
+    <h1 class="text-center">Welcome to Video Uploader</h1>
+    <hr>
+    {% for x in video %}
+    <div class="video-card">
+        <h3 class="video-title">{{x.caption}}</h3>
+        <div class="embed-responsive embed-responsive-16by9">
+            <video class="embed-responsive-item" controls id="video-{{forloop.counter}}" loop>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    <script>
+        (function() {
+            var video = document.getElementById('video-{{forloop.counter}}');
+            var videoUrl = "{% if x.processed_video %}{{x.processed_video.url}}{% else %}{{x.video.url}}{% endif %}";
+            
+            if (videoUrl.endsWith('m3u8')) {
+                if (Hls.isSupported()) {
+                    var hls = new Hls({
+                        debug: false,
+                        manifestLoadingTimeOut: 60000,
+                        manifestLoadingMaxRetry: 5,
+                        levelLoadingTimeOut: 60000,
+                        levelLoadingMaxRetry: 5,
+                        fragLoadingTimeOut: 60000,
+                        fragLoadingMaxRetry: 5
+                    });
+                    hls.loadSource(videoUrl);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                        video.loop = true;  // Enable looping
+                        video.play().catch(function(error) {
+                            console.log("Auto-play prevented:", error);
+                        });
+                    });
+                    // Handle end of segment playlist
+                    hls.on(Hls.Events.ENDED, function() {
+                        video.currentTime = 0;  // Reset to beginning
+                        video.play();           // Start playing again
+                    });
+                }
+                // For Safari - native HLS support
+                else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = videoUrl;
+                    video.loop = true;  // Enable looping for Safari
+                }
+            } else {
+                // For regular MP4 videos
+                video.src = videoUrl;
+                video.loop = true;  // Enable looping for regular videos
+            }
+        })();
+    </script>
+    {% empty %}
+    <p class="text-center text-muted">No videos uploaded yet.</p>
+    {% endfor %}
+</div>
+<!-- Optional JavaScript -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-
+9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-
+B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+</html>

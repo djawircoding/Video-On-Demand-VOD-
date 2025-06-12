@@ -1,0 +1,48 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+static/
+
+# Virtual Environment
+venv/
+ENV/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Development/IDE
+.idea/
+*.swp
+*.swo
+
+# FFmpeg
+ffmpeg/
+*.exe
