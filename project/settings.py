@@ -12,10 +12,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+import django
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Web server media directory for processed videos
+WEB_MEDIA_ROOT = '/var/www/html/media'  # Apache/Nginx web folder
+WEB_MEDIA_URL = 'http://202.169.231.66/media/'  # Web URL for accessing media
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -25,8 +29,7 @@ SECRET_KEY = 'django-insecure-ioj%e(3yul-ix!(zj-7a#gemy=#j(7ko@f&2v%+g!fp8=$dbk+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['202.169.231.66', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -125,3 +128,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Added by me
+django.setup()
+django.setup()
