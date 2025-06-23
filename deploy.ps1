@@ -6,7 +6,7 @@ $remotePort = "1024"
 $remoteUser = "surya"
 $remotePassword = "surya123"
 $localPath = "."
-$remotePath = "/home/surya/django_project"
+$remotePath = "/var/www/html/media"
 
 # Create a temporary script for scp
 $scpScript = @"
